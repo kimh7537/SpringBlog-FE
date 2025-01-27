@@ -1,0 +1,35 @@
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
+import vueDevTools from 'vite-plugin-vue-devtools'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+    vueJsx(),
+    vueDevTools(),
+  ],
+  esbuild: {
+    target: 'esnext',
+    define: {
+      "process.env.TSYRINGE_REGISTER_DI": "true"
+    }
+  },
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+  },
+  server: {
+    port: 3000,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        // rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  }
+})
